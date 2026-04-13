@@ -19,7 +19,7 @@ const toastHtml = `
                 <strong id="notification-toast-title" class="d-block"></strong>
                 <span id="notification-toast-body"></span>
             </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            <button id="notification-toast-close" type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label=""></button>
         </div>
     </div>
 </div>`;
@@ -129,14 +129,16 @@ class BSN {
                 button_submit: null,
                 button_no: null,
                 app: null,
-                bootstrap: null
+                bootstrap: null,
+                focus: false
             },
             toast: {
                 container: null,
                 element: null,
                 title: null,
                 body: null,
-                bootstrap: null
+                bootstrap: null,
+                close: null
             }
         }
     }
@@ -167,7 +169,9 @@ class BSN {
             if (data.type == "prompt") {
                 this.data.prompt.element.addEventListener("shown.bs.modal", (e) => {
                     if (this.data.prompt.input) {
+                        if (this.data.prompt.focus) {
                         this.data.prompt.input.focus();
+                        }
                     }
                 }, "global"); // global or local. from Gianna.js (gianna framework)
             }
@@ -186,10 +190,13 @@ class BSN {
             element: ".toast",
             title: "#notification-toast-title",
             body: "#notification-toast-body",
+            close: "#notification-toast-close",
             html: toastHtml
         }, "element");
 
         let t = this.data.toast;
+        t.close.setAttribute("aria-label",obj.ok_text || "Close");
+    
         t.title.textContent = obj.title || "Toast title";
         t.body.textContent = obj.message || "Toast message";
         t.element.className = t.element.className.replace(/\btext-bg-\S+/g, "");
@@ -198,6 +205,12 @@ class BSN {
             t.bootstrap.dispose();
             t.bootstrap = new bootstrap.Toast(this.data.toast.element, { delay: obj.delay || 5000 });
         }
+if (typeof obj.ok==="function") {
+t.close.onclick = null;
+t.close.onclick = (e) => {
+    obj.ok();
+}    
+}
         t.bootstrap.show();
     }
     /**
@@ -222,7 +235,7 @@ class BSN {
         p.button_submit.textContent = obj.ok_text || "Submit";
         p.button_no.textContent = obj.no_text || "Cancel";
         p.app.textContent = obj.app || "";
-
+p.focus = obj.focus || false;
         p.bootstrap.show();
         return new Promise((result) => {
 

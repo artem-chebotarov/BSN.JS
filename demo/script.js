@@ -18,7 +18,8 @@ title: "Authentication",
 message: "PIN",
 ok_text: "Connect",
 no_text: "Cancel",
-app: "Login center"
+app: "Login center",
+focus: true
     });
     $gn.bsn.toast({
 title: "Login center",
@@ -28,7 +29,9 @@ message: value ? "Result: "+value : value
 document.getElementById("toast").onclick = function() {
     $gn.bsn.toast({
         title: "Bank system",
-        message: "+5500 coins"
+        message: "+5500 coins",
+        ok_text: "Close app",
+        ok: () => alert("super ok")
     })
 }
 document.getElementById("alert").onclick = function() {
