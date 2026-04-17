@@ -40,6 +40,10 @@ This method allows you to send a notification that cannot be ignored.
 $gn.bsn.alert({
     title: "",    // Dialog header
     message: "",  // Message body
+        oneShowStart: (e) => {}, // event show.bs.modal
+    oneShowEnd: (e) => {}, // event shown.bs.modal
+    oneHideStart: (e) => {}, // event hide.bs.modal
+    oneHideEnd: (e) => {}, // event hidden.bs.modal
     ok_text: "",  // Button label (e.g., "Understood")
     app: "",      // Optional app label (e.g., "blog-content")
     ok: () => {}  // Callback executed after clicking the button
@@ -61,6 +65,10 @@ let result = await $gn.bsn.confirm({
     title: "",    // Header
     message: "",  // Message
     app: "",      // App or script label
+        oneShowStart: (e) => {}, // event show.bs.modal
+    oneShowEnd: (e) => {}, // event shown.bs.modal
+    oneHideStart: (e) => {}, // event hide.bs.modal
+    oneHideEnd: (e) => {}, // event hidden.bs.modal
     ok_text: "",  // Confirmation button label
     no_text: "",  // Decline button label
     ok: () => {}, // Confirmation callback
@@ -82,7 +90,12 @@ let value = await $gn.bsn.prompt({
     message: "",  // Message
     input: "",    // Input field title (important for accessibility)
     value: "",    // Default value in the input field
+    focus: true,
     app: "",      // Script label
+        oneShowStart: (e) => {}, // event show.bs.modal
+    oneShowEnd: (e) => {}, // event shown.bs.modal
+    oneHideStart: (e) => {}, // event hide.bs.modal
+    oneHideEnd: (e) => {}, // event hidden.bs.modal
     ok_text: "",  // Confirmation button label
     no_text: "",  // Cancellation button label
     ok: () => {}, // Confirmation callback
@@ -104,6 +117,10 @@ $gn.bsn.toast({
     message: "",  // Message
     type: "",     // Visual type (e.g., success, danger, warning, info)
     delay: 5000,  // Time before the message disappears (in ms)
+        oneShowStart: (e) => {}, // event show.bs.toast
+    oneShowEnd: (e) => {}, // event shown.bs.toast
+    oneHideStart: (e) => {}, // event hide.bs.toast
+    oneHideEnd: (e) => {}, // event hidden.bs.toast
     ok_text: "",  // Button label
     ok: () => {}  // Callback for the button
 });

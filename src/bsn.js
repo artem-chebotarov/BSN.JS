@@ -1,19 +1,19 @@
 /**
  * © Vikargia 2026 Artem Chebotarov
  * Plugin: BSN (Bootstrap service notification)
- * Version: 1.0
- * Date: 08.04.2026
+ * Version: 1.2.0
+ * Date: 016.04.2026
  * Licensed: Apache 2.0
  * Author: Artem Chebotarov
- * Email: vikargia@gmail.com
- * Github: https://github.com/vikargia/bsn
+ * Email: artem.tschebotarov@gmail.com
+ * Github: https://github.com/artem-chebotarov/BSN.JS
  */
 
 
 // html templates
 const toastHtml = `
 <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1060;">
-    <div id="notification-toast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div id="notification-toast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true" data-modal="toast">
         <div class="d-flex">
             <div class="toast-body">
                 <strong id="notification-toast-title" class="d-block"></strong>
@@ -25,7 +25,7 @@ const toastHtml = `
 </div>`;
 
 const promptHtml = `
-<div class="modal fade" tabindex="-1" role="dialog" aria-modal="true">
+<div class="modal fade" tabindex="-1" role="dialog" aria-modal="true" data-modal="prompt">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 350px;">
         <div class="modal-content bg-dark border-success shadow-lg text-success">
             <div class="modal-header border-success">
@@ -51,7 +51,7 @@ const promptHtml = `
 
 
 const confirmHtml = `
-<div class="modal fade" tabindex="-1" role="dialog" aria-modal="true">
+<div class="modal fade" tabindex="-1" role="dialog" aria-modal="true" data-modal="confirm">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 350px;">
         <div class="modal-content bg-dark border-info shadow-lg text-info">
             <div class="modal-header border-info">
@@ -72,7 +72,7 @@ const confirmHtml = `
 </div>`;
 
 const alertHtml = `
-                <div id="alert" class="modal fade" tabindex="-1" role="dialog" aria-modal="true">
+                <div id="alert" class="modal fade" tabindex="-1" role="dialog" aria-modal="true" data-modal="alert">
                     <div class="modal-dialog modal-dialog-centered" style="width: 350px;">
                         <div class="modal-content bg-dark border-warning shadow-lg text-warning">
                             
@@ -104,13 +104,18 @@ class BSN {
     constructor() {
         // Data object
         this.data = {
+            wrapper: null,
             alert: {
                 element: null,
                 title: null,
                 body: null,
                 button: null,
                 bootstrap: null,
-                app: null
+                app: null,
+                onShowStart: null,
+                onShowEnd: null,
+onHideStart: null,
+onHideEnd: null
             },
             confirm: {
                 element: null,
@@ -119,7 +124,11 @@ class BSN {
                 btn_yes: null,
                 btn_no: null,
                 bootstrap: null,
-                app: null
+                app: null,
+                onShowStart: null,
+                onShowEnd: null,
+                onHideStart: null,
+                onHideEnd: null
             },
             prompt: {
                 element: null,
@@ -130,7 +139,11 @@ class BSN {
                 button_no: null,
                 app: null,
                 bootstrap: null,
-                focus: false
+                focus: false,
+                onShowStart: null,
+                onShowEnd: null,
+                onHideStart: null,
+                onHideEnd: null
             },
             toast: {
                 container: null,
@@ -138,9 +151,35 @@ class BSN {
                 title: null,
                 body: null,
                 bootstrap: null,
-                close: null
+                close: null,
+                onShowStart: null,
+                onShowEnd: null,
+                onHideStart: null,
+                onHideEnd: null
             }
         }
+    }
+    async event(e) {
+        let type = e.type;
+        let modal = e.target.getAttribute("data-modal");
+        let data = this.data;
+        if (modal===null) return;
+        if ((type=="show.bs.modal" || type=="show.bs.toast") && typeof data[modal].onShowStart==="function") await data[modal].onShowStart(e);
+else if ((type=="shown.bs.modal" || type=="shown.bs.toast") && typeof data[modal].onShowEnd==="function") await data[modal].onShowEnd(e);
+else if ((type=="hide.bs.modal" || type=="hide.bs.toast") && typeof data[modal].onHideStart==="function") await data[modal].onHideStart(e);
+else if ((type=="hidden.bs.modal" || type=="hidden.bs.toast") && typeof data[modal].onHideEnd==="function") await data[modal].onHideEnd(e);
+
+    if (type=="shown.bs.modal" && modal=="prompt" && this.data.prompt.focus) this.data.prompt.input.focus();
+
+    }
+    addEventsListener() {
+    let events = ["show.bs.modal","shown.bs.modal","hide.bs.modal","hidden.bs.modal","show.bs.toast","shown.bs.toast","hide.bs.toast","hidden.bs.toast"];
+    events.forEach((ev) => {
+this.data.wrapper.addEventListener(ev, async (e) => {
+await this.event(e);
+});
+    });
+
     }
     /**
  * Method that initializes all dialog elements.
@@ -160,21 +199,18 @@ class BSN {
             if (["type", "html", index].includes(key)) continue;
             this.data[data.type][key] = this.data[data.type][index].querySelector(data[key]);
         }
-        document.body.appendChild(this.data[data.type][element]);
+        if (!this.data.wrapper) {
+            this.data.wrapper = document.createElement("div");
+            this.data.wrapper.id = "bootstrap-service-notification-plugin-for-gianna-framework";
+            document.body.appendChild(this.data.wrapper);
+        this.addEventsListener(); // events bootstrap
+        }
+        this.data.wrapper.appendChild(this.data[data.type][element]);
         if (["prompt", "confirm", "alert"].includes(data.type)) {
             this.data[data.type].bootstrap = new bootstrap.Modal(this.data[data.type][element], {
                 keyboard: false,
                 backdrop: 'static'
             });
-            if (data.type == "prompt") {
-                this.data.prompt.element.addEventListener("shown.bs.modal", (e) => {
-                    if (this.data.prompt.input) {
-                        if (this.data.prompt.focus) {
-                        this.data.prompt.input.focus();
-                        }
-                    }
-                }, "global"); // global or local. from Gianna.js (gianna framework)
-            }
         } else {
             this.data.toast.bootstrap = new bootstrap.Toast(this.data.toast.element, { delay: 5000 });
         }
@@ -201,10 +237,16 @@ class BSN {
         t.body.textContent = obj.message || "Toast message";
         t.element.className = t.element.className.replace(/\btext-bg-\S+/g, "");
         t.element.classList.add(`text-bg-${obj.type || 'primary'}`);
+
         if (obj.delay) {
             t.bootstrap.dispose();
             t.bootstrap = new bootstrap.Toast(this.data.toast.element, { delay: obj.delay || 5000 });
         }
+t.onShowStart = obj.onShowStart || null;
+t.onShowEnd = obj.onShowEnd || null;
+t.onHideStart = obj.onHideStart || null;
+t.onHideEnd = obj.onHideEnd || null;
+
 if (typeof obj.ok==="function") {
 t.close.onclick = null;
 t.close.onclick = (e) => {
@@ -236,6 +278,12 @@ t.close.onclick = (e) => {
         p.button_no.textContent = obj.no_text || "Cancel";
         p.app.textContent = obj.app || "";
 p.focus = obj.focus || false;
+p.onShowStart = obj.onShowStart || null;
+p.onShowEnd = obj.onShowEnd || null;
+p.onHideStart = obj.onHideStart || null;
+p.onHideEnd = obj.onHideEnd || null;
+
+
         p.bootstrap.show();
         return new Promise((result) => {
 
@@ -275,6 +323,10 @@ p.focus = obj.focus || false;
         c.btn_yes.textContent = obj.ok_text || "Yes";
         c.btn_no.textContent = obj.no_text || "No";
         c.app.textContent = obj.app || "";
+        c.onShowStart = obj.onShowStart || null;
+c.onShowEnd = obj.onShowEnd || null;
+c.onHideStart = obj.onHideStart || null;
+c.onHideEnd = obj.onHideEnd || null;
         c.bootstrap.show();
         return new Promise((res) => {
             c.btn_yes.onclick = null;
@@ -312,6 +364,11 @@ p.focus = obj.focus || false;
         this.data.alert.body.textContent = obj.message || "Alert message";
         this.data.alert.app.textContent = obj.app || "";
         this.data.alert.button.textContent = obj.ok_text || "OK";
+                    this.data.alert.onShowStart = obj.onShowStart || null;
+this.data.alert.onShowEnd = obj.onShowEnd || null;
+this.data.alert.onHideStart = obj.onHideStart || null;
+this.data.alert.onHideEnd = obj.onHideEnd || null;
+
         return new Promise((res) => {
             let result = null;
             this.data.alert.button.onclick = async () => {
@@ -321,6 +378,8 @@ p.focus = obj.focus || false;
                 this.data.alert.bootstrap.hide();
                 res(result);
             }
+
+
             this.data.alert.bootstrap.show();
         });
     }

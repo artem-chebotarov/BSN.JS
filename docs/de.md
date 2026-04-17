@@ -39,6 +39,10 @@ Diese Methode ermöglicht es Ihnen, eine Benachrichtigung zu senden, die nicht i
 $gn.bsn.alert({
     title: "",    // Dialog-Header
     message: "",  // Nachrichtentext
+        oneShowStart: (e) => {}, // Ereignis show.bs.modal
+    oneShowEnd: (e) => {}, // Ereignis shown.bs.modal
+    oneHideStart: (e) => {}, // Ereignis hide.bs.modal
+    oneHideEnd: (e) => {}, // Ereignis hidden.bs.modal
     ok_text: "",  // Beschriftung der Schaltfläche (z. B. "Verstanden")
     app: "",      // Optionales App-Label (z. B. "blog-content")
     ok: () => {}  // Callback, der nach dem Klicken ausgeführt wird
@@ -60,6 +64,10 @@ let result = await $gn.bsn.confirm({
     title: "",    // Header
     message: "",  // Nachricht
     app: "",      // App- oder Skript-Label
+        oneShowStart: (e) => {}, // Ereignis show.bs.modal
+    oneShowEnd: (e) => {}, // Ereignis shown.bs.modal
+    oneHideStart: (e) => {}, // Ereignis hide.bs.modal
+    oneHideEnd: (e) => {}, // Ereignis hidden.bs.modal
     ok_text: "",  // Beschriftung für "Bestätigen"
     no_text: "",  // Beschriftung für "Ablehnen"
     ok: () => {}, // Bestätigungs-Callback
@@ -81,6 +89,7 @@ let value = await $gn.bsn.prompt({
     message: "",  // Nachricht
     input: "",    // Titel des Eingabefeldes (wichtig für Barrierefreiheit)
     value: "",    // Standardwert im Eingabefeld
+    focus: true, // Autofocus
     app: "",      // Skript-Label
     ok_text: "",  // Bestätigungs-Button
     no_text: "",  // Abbrechen-Button
@@ -103,6 +112,10 @@ $gn.bsn.toast({
     message: "",  // Nachricht
     type: "",     // Visueller Typ (z. B. success, danger, warning, info)
     delay: 5000,  // Zeit bis zum Ausblenden (in ms)
+        oneShowStart: (e) => {}, // Ereignis show.bs.toast
+    oneShowEnd: (e) => {}, // Ereignis shown.bs.toast
+    oneHideStart: (e) => {}, // Ereignis hide.bs.toast
+    oneHideEnd: (e) => {}, // Ereignis hidden.bs.toast
     ok_text: "",  // Button-Beschriftung
     ok: () => {}  // Callback für den Button
 });

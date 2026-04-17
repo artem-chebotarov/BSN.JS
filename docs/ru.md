@@ -46,6 +46,10 @@ $gn.bsn.alert({
     message: "",  // Текст сообщения
     ok_text: "",  // Текст кнопки подтверждения
     app: "",      // Дополнительная метка (например, название модуля)
+    oneShowStart: (e) => {}, // событие show.bs.modal
+    oneShowEnd: (e) => {}, // Событие shown.bs.modal
+    oneHideStart: (e) => {}, // Событие hide.bs.modal,
+    oneHideEnd: (e) => {}, // Событие hidden.bs.modal
     ok: () => {}  // Callback-функция после нажатия кнопки
 });
 ```
@@ -65,6 +69,10 @@ let result = await $gn.bsn.confirm({
     title: "",    // Заголовок
     message: "",  // Сообщение вопроса
     app: "",      // Подпись приложения
+        oneShowStart: (e) => {}, // событие show.bs.modal
+    oneShowEnd: (e) => {}, // Событие shown.bs.modal
+    oneHideStart: (e) => {}, // Событие hide.bs.modal,
+    oneHideEnd: (e) => {}, // Событие hidden.bs.modal
     ok_text: "",  // Текст кнопки "Да"
     no_text: "",  // Текст кнопки "Нет"
     ok: () => {}, // Действие при согласии
@@ -86,7 +94,12 @@ let value = await $gn.bsn.prompt({
     message: "",  // Инструкция для пользователя
     input: "",    // Описание поля (title для скринридеров)
     value: "",    // Предзаполненный текст в поле
+    focus: true, // Audofocus
     app: "",      // Подпись модуля
+        oneShowStart: (e) => {}, // событие show.bs.modal
+    oneShowEnd: (e) => {}, // Событие shown.bs.modal
+    oneHideStart: (e) => {}, // Событие hide.bs.modal,
+    oneHideEnd: (e) => {}, // Событие hidden.bs.modal
     ok_text: "",  // Кнопка подтверждения
     no_text: "",  // Кнопка отмены
     ok: () => {}, // Callback подтверждения
@@ -108,6 +121,10 @@ $gn.bsn.toast({
     message: "",  // Текст сообщения
     type: "",     // Стиль (например: success, danger, warning, info)
     delay: 5000,  // Время отображения в миллисекундах
+        oneShowStart: (e) => {}, // событие show.bs.toast
+    oneShowEnd: (e) => {}, // Событие shown.bs.toast
+    oneHideStart: (e) => {}, // Событие hide.bs.toast,
+    oneHideEnd: (e) => {}, // Событие hidden.bs.toast
     ok_text: "",  // Текст на кнопке (если нужна)
     ok: () => {}  // Действие при нажатии на кнопку в тосте
 });
