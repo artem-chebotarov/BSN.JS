@@ -17,7 +17,7 @@ const toastHtml = `
         <div class="d-flex">
             <div class="toast-body">
                 <strong id="notification-toast-title" class="d-block"></strong>
-                <span id="notification-toast-body"></span>
+                <span style="white-space: pre-line" id="notification-toast-body"></span>
             </div>
             <button id="notification-toast-close" type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label=""></button>
         </div>
@@ -58,11 +58,11 @@ const confirmHtml = `
                 <h1 id="notification-confirm-title" class="modal-title fs-5 m-0"></h1>
             </div>
             <div class="modal-body p-4 text-center">
-                <p id="notification-confirm-body" class="mb-0 fs-6"></p>
+                <p style="white-space: pre-line" id="notification-confirm-body" class="mb-0 fs-6"></p>
             </div>
             <div class="modal-footer border-info d-flex justify-content-between">
-                            <button id="notification-confirm-button-yes" class="btn btn-info w-45">Да</button>
-                <button id="notification-confirm-button-no" class="btn btn-outline-info w-45">Нет</button>
+                            <button  id="notification-confirm-button-yes" class="btn btn-info w-45">Да</button>
+                <button  id="notification-confirm-button-no" class="btn btn-outline-info w-45">Нет</button>
             </div>
             <div class="p-2 text-center text-secondary" style="font-size: 0.8rem;">
                 <span id="notification-confirm-app"></span>
@@ -81,7 +81,7 @@ const alertHtml = `
                             </div>
                             
                             <div  class="modal-body p-4 text-center">
-                                <p id="notification-alert-body" class="mb-0 fs-6"></p>
+                                <p style="white-space: pre-line" id="notification-alert-body" class="mb-0 fs-6"></p>
                             </div>
                             
                             <div class="modal-footer border-warning flex-column align-items-stretch">
@@ -102,6 +102,7 @@ const alertHtml = `
  */
 class BSN {
     constructor() {
+        this.lang = "";
         // Data object
         this.data = {
             wrapper: null,
@@ -177,6 +178,7 @@ else if ((type=="hidden.bs.modal" || type=="hidden.bs.toast") && typeof data[mod
     events.forEach((ev) => {
 this.data.wrapper.addEventListener(ev, async (e) => {
 await this.event(e);
+
 });
     });
 
@@ -190,6 +192,7 @@ await this.event(e);
     init(index, data, element) {
         if (this.data[data.type][element]) return;
         let wrapper = document.createElement("div");
+
         wrapper.innerHTML = data.html;
         this.data[data.type][index] = wrapper.querySelector(data[index]);
         this.data[data.type].title = this.data[data.type][index].querySelector("#notification-" + data.type + "-title");
@@ -201,6 +204,7 @@ await this.event(e);
         }
         if (!this.data.wrapper) {
             this.data.wrapper = document.createElement("div");
+             this.data.wrapper.setAttribute("lang",this.lang);
             this.data.wrapper.id = "bootstrap-service-notification-plugin-for-gianna-framework";
             document.body.appendChild(this.data.wrapper);
         this.addEventsListener(); // events bootstrap
